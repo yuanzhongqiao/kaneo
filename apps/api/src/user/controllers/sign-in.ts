@@ -6,28 +6,28 @@ import { UserErrors } from "../errors";
 type SignInArgs = Static<typeof signInUserSchema>;
 
 async function signIn({
-	email,
-	password,
+  email,
+  password,
 }: Pick<SignInArgs, "email" | "password">) {
-	const user = await db.query.userTable.findFirst({
-		where: (users, { eq }) => eq(users.email, email),
-	});
+  const user = await db.query.userTable.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
 
-	if (!user) {
-		throw new Error(UserErrors.NotFound);
-	}
+  if (!user) {
+    throw new Error(UserErrors.NotFound);
+  }
 
-	const isPasswordValid = await Bun.password.verify(
-		password,
-		user.password,
-		"bcrypt",
-	);
+  const isPasswordValid = await Bun.password.verify(
+    password,
+    user.password,
+    "bcrypt"
+  );
 
-	if (!isPasswordValid) {
-		throw new Error(UserErrors.InvalidCredentials);
-	}
+  if (!isPasswordValid) {
+    throw new Error(UserErrors.InvalidCredentials);
+  }
 
-	return user;
+  return user;
 }
 
 export default signIn;

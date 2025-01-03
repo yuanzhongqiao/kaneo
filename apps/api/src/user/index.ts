@@ -7,60 +7,60 @@ import { signInUserSchema, signUpUserSchema } from "./db/queries";
 import createToken from "./utils/create-token";
 
 const user = new Elysia({ prefix: "/user" })
-	.use(
-		jwt({
-			name: "accessJwt",
-			secret: process.env.JWT_ACCESS ?? "",
-		}),
-	)
-	.use(
-		jwt({
-			name: "refreshJwt",
-			secret: process.env.JWT_REFRESH ?? "",
-		}),
-	)
-	.post(
-		"/sign-in",
-		async ({ body, accessJwt, refreshJwt, set }) => {
-			const user = await signIn(body);
+  .use(
+    jwt({
+      name: "accessJwt",
+      secret: process.env.JWT_ACCESS ?? "",
+    })
+  )
+  .use(
+    jwt({
+      name: "refreshJwt",
+      secret: process.env.JWT_REFRESH ?? "",
+    })
+  )
+  .post(
+    "/sign-in",
+    async ({ body, accessJwt, refreshJwt, set }) => {
+      const user = await signIn(body);
 
-			const accessToken = await createToken({
-				expires: ACCESS_TOKEN_EXPIRY,
-				jwt: accessJwt,
-				payload: {
-					id: user.id,
-				},
-			});
+      const accessToken = await createToken({
+        expires: ACCESS_TOKEN_EXPIRY,
+        jwt: accessJwt,
+        payload: {
+          id: user.id,
+        },
+      });
 
-			const refreshToken = await createToken({
-				expires: REFRESH_TOKEN_EXPIRY,
-				jwt: refreshJwt,
-				payload: {
-					id: user.id,
-				},
-			});
+      const refreshToken = await createToken({
+        expires: REFRESH_TOKEN_EXPIRY,
+        jwt: refreshJwt,
+        payload: {
+          id: user.id,
+        },
+      });
 
-			set.cookie = {
-				accessToken,
-				refreshToken,
-			};
+      set.cookie = {
+        accessToken,
+        refreshToken,
+      };
 
-			return {
-				user,
-			};
-		},
-		{
-			body: t.Omit(signInUserSchema, ["id", "name", "createdAt"]),
-		},
-	)
-	.post(
-		"/sign-up",
-		async ({ body }) => {
-			return signUp(body);
-		},
-		{
-			body: signUpUserSchema,
-		},
-	);
+      return {
+        user,
+      };
+    },
+    {
+      body: t.Omit(signInUserSchema, ["id", "name", "createdAt"]),
+    }
+  )
+  .post(
+    "/sign-up",
+    async ({ body }) => {
+      return signUp(body);
+    },
+    {
+      body: signUpUserSchema,
+    }
+  );
 
 export default user;
