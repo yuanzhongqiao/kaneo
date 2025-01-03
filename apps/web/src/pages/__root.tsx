@@ -4,17 +4,17 @@ import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 export const rootRoute = createRootRouteWithContext<{
-  queryClient: QueryClient;
+	queryClient: QueryClient;
 }>()({
-  component: RootComponent,
+	component: RootComponent,
 });
 
 function RootComponent() {
-  return (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools position="bottom-right" />
-    </>
-  );
+	return (
+		<>
+			<Outlet />
+			<ReactQueryDevtools buttonPosition="top-right" />
+			<TanStackRouterDevtools position="bottom-right" />
+		</>
+	);
 }
