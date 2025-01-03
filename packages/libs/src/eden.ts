@@ -1,4 +1,8 @@
-import { edenTreaty } from "@elysiajs/eden";
+import { treaty } from "@elysiajs/eden";
 import type { App } from "@kaneo/api";
 
-export const api = edenTreaty<App>("http://0.0.0.0:1337");
+export const api = treaty<App>("http://localhost:1337", {
+	fetch: {
+		credentials: "include",
+	},
+});
