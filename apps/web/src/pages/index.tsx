@@ -1,7 +1,7 @@
 import queryClient from "@/query-client";
+import { rootRoute } from "@/routes";
 import { api } from "@kaneo/libs";
 import { Outlet, createRoute, redirect } from "@tanstack/react-router";
-import { rootRoute } from "./__root";
 
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,

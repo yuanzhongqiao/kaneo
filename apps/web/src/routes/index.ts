@@ -1,17 +1,23 @@
 import { indexRoute } from "@/pages";
-import { rootRoute } from "@/pages/__root";
-import { authIndexRoute } from "@/pages/auth";
 import { signInRoute } from "@/pages/auth/sign-in";
 import { signUpRoute } from "@/pages/auth/sign-up";
 import { dashboardIndexRoute } from "@/pages/dashboard";
 import queryClient from "@/query-client";
-import { createRouter } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import {
+  createRootRouteWithContext,
+  createRouter,
+} from "@tanstack/react-router";
+import RootComponent from "./__root";
+
+export const rootRoute = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  component: RootComponent,
+});
 
 const routeTree = rootRoute.addChildren([
-  indexRoute.addChildren([
-    authIndexRoute.addChildren([signInRoute, signUpRoute]),
-    dashboardIndexRoute,
-  ]),
+  indexRoute.addChildren([signInRoute, signUpRoute, dashboardIndexRoute]),
 ]);
 
 const router = createRouter({

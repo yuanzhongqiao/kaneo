@@ -1,8 +1,8 @@
+import { rootRoute } from "@/routes";
 import { createRoute } from "@tanstack/react-router";
 import { AuthLayout } from "../../components/auth/layout";
 import { SignInForm } from "../../components/auth/sign-in-form";
 import { AuthToggle } from "../../components/auth/toggle";
-import { rootRoute } from "../__root";
 
 export const signInRoute = createRoute({
   getParentRoute: () => rootRoute,

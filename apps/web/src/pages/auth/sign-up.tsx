@@ -1,7 +1,7 @@
 import { AuthLayout } from "@/components/auth/layout";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 import { AuthToggle } from "@/components/auth/toggle";
-import { rootRoute } from "@/pages/__root";
+import { rootRoute } from "@/routes";
 import { createRoute } from "@tanstack/react-router";
 
 export const signUpRoute = createRoute({
