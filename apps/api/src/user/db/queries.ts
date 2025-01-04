@@ -3,12 +3,12 @@ import { t } from "elysia";
 import { userTable } from "../../database/schema";
 
 export const signUpUserSchema = createInsertSchema(userTable, {
-	email: t.String({ format: "email" }),
-	password: t.String(),
-	name: t.String(),
+  email: t.String({ format: "email" }),
+  password: t.String(),
+  name: t.String(),
 });
 
 export const signInUserSchema = createSelectSchema(userTable, {
-	email: t.String({ format: "email" }),
-	password: t.String(),
+  email: t.String({ format: "email" }),
+  password: t.String(),
 });

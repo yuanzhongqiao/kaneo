@@ -25,7 +25,8 @@
 		"react-hook-form": "^7.54.2",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
-		"zod": "link:@hookform/resolvers/zod"
+		"zod": "link:@hookform/resolvers/zod",
+		"zustand": "^5.0.2"
 	},
 	"devDependencies": {
 		"@kaneo/libs": "workspace:*",
