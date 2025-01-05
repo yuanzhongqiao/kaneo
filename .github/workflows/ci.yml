@@ -32,7 +32,7 @@ jobs:
         run: pnpm install
  
       - name: Lint project with Biome
-        run: pnpm format-and-lint
+        run: pnpm run format-and-lint
       
       - name: Build project
-        run: pnpm build
+        run: pnpm run build

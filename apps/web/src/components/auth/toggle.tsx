@@ -12,7 +12,7 @@ export function AuthToggle({ message, linkText, linkTo }: AuthToggleProps) {
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
         {message}{" "}
         <Link
-          href={linkTo}
+          to={linkTo}
           className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium"
         >
           {linkText}
