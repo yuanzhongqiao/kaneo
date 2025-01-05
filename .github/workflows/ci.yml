@@ -35,4 +35,4 @@ jobs:
         run: pnpm format-and-lint
       
       - name: Build project
-        run: pnpm format-and-lint
+        run: pnpm build
