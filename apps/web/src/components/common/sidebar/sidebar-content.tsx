@@ -1,4 +1,4 @@
-import type { User } from "@/components/providers/auth-provider";
+import type { User } from "@/types/user";
 import { Folder, Plus, Settings, Users } from "lucide-react";
 import { Avatar, AvatarFallback } from "../../ui/avatar";
 import SignOutButton from "./sign-out-button";
@@ -17,6 +17,8 @@ export function SidebarContent({
   setCurrentWorkspace,
   currentUser,
 }: SidebarContentProps) {
+  if (!currentUser) return null;
+
   return (
     <>
       <nav className="flex-1 overflow-y-auto p-3">
