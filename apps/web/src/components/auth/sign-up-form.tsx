@@ -8,9 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import signUp from "@/fetchers/user/sign-up";
+import useSignUp from "@/hooks/mutations/use-sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
@@ -41,13 +40,10 @@ export function SignUpForm() {
       name: "",
     },
   });
-  const { isError, error, mutateAsync } = useMutation({
-    mutationFn: () =>
-      signUp({
-        email: form.getValues().email,
-        password: form.getValues().password,
-        name: form.getValues().name,
-      }),
+  const { isError, error, mutateAsync } = useSignUp({
+    email: form.getValues("email"),
+    password: form.getValues("password"),
+    name: form.getValues("name"),
   });
 
   const onSubmit = async () => {

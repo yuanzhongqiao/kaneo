@@ -8,9 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import signIn from "@/fetchers/user/sign-in";
+import useSignIn from "@/hooks/mutations/use-sign-in";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
@@ -38,17 +37,13 @@ export function SignInForm() {
       password: "",
     },
   });
-  const { error, isError, mutateAsync, isPending } = useMutation({
-    mutationFn: () =>
-      signIn({
-        email: form.getValues().email,
-        password: form.getValues().password,
-      }),
+  const { error, isError, mutateAsync, isPending } = useSignIn({
+    email: form.getValues("email"),
+    password: form.getValues("password"),
   });
 
   const onSubmit = async () => {
     await mutateAsync();
-
     history.push("/dashboard");
   };
 

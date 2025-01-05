@@ -1,45 +1,34 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import user from "./user";
-import { REFRESH_TOKEN_EXPIRY } from "./user/constants";
-import createToken from "./user/utils/create-token";
+import { validateSessionToken } from "./user/controllers/validate-session-token";
 
 const app = new Elysia()
   .use(cors())
   .use(user)
   .guard({
-    async beforeHandle({
-      set,
-      accessJwt,
-      refreshJwt,
-      cookie: { accessToken, refreshToken },
-    }) {
-      const decodedAccessToken = await accessJwt.verify(accessToken.value);
-      const decodedRefreshToken = await refreshJwt.verify(refreshToken.value);
-
-      if (!decodedAccessToken) {
+    async beforeHandle({ set, cookie: { session } }) {
+      if (!session?.value) {
         set.status = "Unauthorized";
 
         return set.status;
       }
 
-      if (!decodedRefreshToken) {
-        const refreshToken = await createToken({
-          jwt: refreshJwt,
-          expires: REFRESH_TOKEN_EXPIRY,
-          payload: {
-            id: String(decodedAccessToken.id),
-          },
-        });
+      const { user, session: validatedSession } = await validateSessionToken(
+        session.value,
+      );
 
-        if (set.cookie) set.cookie.refreshToken = refreshToken;
+      if (!user || !validatedSession) {
+        set.status = "Unauthorized";
+
+        return set.status;
       }
     },
   })
-  .get("/me", async ({ refreshJwt, cookie: { refreshToken } }) => {
-    const profile = await refreshJwt.verify(refreshToken.value);
+  .get("/me", async ({ cookie: { session } }) => {
+    const { user } = await validateSessionToken(session.value ?? "");
 
-    return profile;
+    return user;
   })
   .onError(({ code, error }) => {
     switch (code) {

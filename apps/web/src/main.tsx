@@ -1,11 +1,35 @@
 import queryClient from "@/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "@tanstack/react-router";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@/index.css";
-import router from "@/routes";
+import AuthProvider from "./components/providers/auth-provider";
+import useAuth from "./components/providers/auth-provider/hooks/use-auth";
 import { ThemeProvider } from "./components/providers/theme-provider";
+import { routeTree } from "./routeTree.gen";
+
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
+  context: {
+    user: null,
+    queryClient,
+  },
+});
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+function App() {
+  const { user } = useAuth();
+
+  return <RouterProvider router={router} context={{ user }} />;
+}
 
 const rootElement = document.getElementById("root") as HTMLElement;
 if (!rootElement.innerHTML) {
@@ -14,7 +38,9 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <RouterProvider router={router} />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>,

@@ -1,54 +1,39 @@
 import { jwt } from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
-import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from "./constants";
+import createSession from "./controllers/create-session";
+import invalidateSession from "./controllers/invalidate-session";
 import signIn from "./controllers/sign-in";
 import signUp from "./controllers/sign-up";
 import { signInUserSchema, signUpUserSchema } from "./db/queries";
 import { UserErrors } from "./errors";
-import createToken from "./utils/create-token";
+import generateSessionToken from "./utils/generate-session-token";
 
 const user = new Elysia({ prefix: "/user" })
   .use(
     jwt({
-      name: "accessJwt",
+      name: "sessionToken",
       secret: process.env.JWT_ACCESS ?? "",
-    }),
-  )
-  .use(
-    jwt({
-      name: "refreshJwt",
-      secret: process.env.JWT_REFRESH ?? "",
     }),
   )
   .post(
     "/sign-in",
-    async ({ body, accessJwt, refreshJwt, set }) => {
+    async ({ body, set }) => {
       const user = await signIn(body);
 
-      const accessToken = await createToken({
-        expires: ACCESS_TOKEN_EXPIRY,
-        jwt: accessJwt,
-        payload: {
-          id: user.id,
-        },
-      });
-
-      const refreshToken = await createToken({
-        expires: REFRESH_TOKEN_EXPIRY,
-        jwt: refreshJwt,
-        payload: {
-          id: user.id,
-        },
-      });
-
+      const token = generateSessionToken();
+      const session = await createSession(token, user.id);
       set.cookie = {
-        accessToken,
-        refreshToken,
+        session: {
+          value: token,
+          httpOnly: true,
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          expires: session.expiresAt,
+        },
       };
 
-      return {
-        user,
-      };
+      return user;
     },
     {
       body: t.Omit(signInUserSchema, ["id", "name", "createdAt"]),
@@ -56,30 +41,22 @@ const user = new Elysia({ prefix: "/user" })
   )
   .post(
     "/sign-up",
-    async ({ body, accessJwt, refreshJwt, set }) => {
+    async ({ body, set }) => {
       const user = await signUp(body);
 
       if (!user) throw new Error(UserErrors.FailedToCreateAnAccount);
 
-      const accessToken = await createToken({
-        expires: ACCESS_TOKEN_EXPIRY,
-        jwt: accessJwt,
-        payload: {
-          id: user.id,
-        },
-      });
-
-      const refreshToken = await createToken({
-        expires: REFRESH_TOKEN_EXPIRY,
-        jwt: refreshJwt,
-        payload: {
-          id: user.id,
-        },
-      });
-
+      const token = generateSessionToken();
+      const session = await createSession(token, user.id);
       set.cookie = {
-        accessToken,
-        refreshToken,
+        session: {
+          value: token,
+          httpOnly: true,
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          expires: session.expiresAt,
+        },
       };
 
       return user;
@@ -88,6 +65,13 @@ const user = new Elysia({ prefix: "/user" })
       body: signUpUserSchema,
     },
   )
+  .post("/sign-out", async ({ cookie, cookie: { session } }) => {
+    await invalidateSession(session?.value ?? "");
+    session.remove();
+
+    // biome-ignore lint/performance/noDelete: https://elysiajs.com/patterns/cookie#remove
+    delete cookie.session;
+  })
   .onError(({ code, error }) => {
     switch (code) {
       case "VALIDATION":

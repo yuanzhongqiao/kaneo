@@ -1,16 +1,14 @@
-import { Folder, LogOut, Plus, Settings, Users } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import type { User } from "@/components/providers/auth-provider";
+import { Folder, Plus, Settings, Users } from "lucide-react";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import SignOutButton from "./sign-out-button";
 
 interface SidebarContentProps {
   // biome-ignore lint/suspicious/noExplicitAny: Still WIP
   workspaces: any[];
   currentWorkspace: string | null;
   setCurrentWorkspace: (id: string) => void;
-  currentUser: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
+  currentUser: User;
 }
 
 export function SidebarContent({
@@ -77,8 +75,7 @@ export function SidebarContent({
 
       <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-3 mb-3">
-          <Avatar>
-            <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+          <Avatar className="text-zinc-900 dark:text-zinc-100">
             <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -98,13 +95,7 @@ export function SidebarContent({
             <Settings className="w-3 h-3 mr-1" />
             Settings
           </button>
-          <button
-            type="button"
-            className="flex-1 px-2 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 rounded-lg flex items-center justify-center transition-colors"
-          >
-            <LogOut className="w-3 h-3 mr-1" />
-            Sign out
-          </button>
+          <SignOutButton />
         </div>
       </div>
     </>

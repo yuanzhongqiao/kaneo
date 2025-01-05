@@ -1,4 +1,6 @@
+import useAuth from "@/components/providers/auth-provider/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "../logo";
@@ -8,16 +10,14 @@ import { SidebarHeader } from "./sidebar-header";
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
-  // const { workspaces, currentWorkspace, setCurrentWorkspace } = useKaneoStore();
-  const currentUser = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-  };
+  const { user } = useAuth();
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="w-full"
+    >
       <MobileHeader onMenuClick={() => setIsOpen(true)} />
 
       <div
@@ -47,7 +47,7 @@ export function Sidebar() {
             workspaces={[]}
             currentWorkspace={"Andrej's workspace"}
             setCurrentWorkspace={() => {}}
-            currentUser={currentUser}
+            currentUser={user}
           />
         </div>
       </div>
@@ -58,9 +58,9 @@ export function Sidebar() {
           workspaces={[]}
           currentWorkspace={"Andrej's workspace"}
           setCurrentWorkspace={() => {}}
-          currentUser={currentUser}
+          currentUser={user}
         />
       </div>
-    </>
+    </motion.div>
   );
 }

@@ -15,6 +15,13 @@
 			"when": 1735996197501,
 			"tag": "0001_melted_whizzer",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1736029469835,
+			"tag": "0002_flowery_secret_warriors",
+			"breakpoints": true
 		}
 	]
 }
