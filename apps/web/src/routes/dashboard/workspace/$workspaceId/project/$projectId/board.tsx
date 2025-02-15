@@ -1,11 +1,12 @@
+import KanbanBoard from "@/components/kanban-board";
 import useGetProject from "@/hooks/queries/project/use-get-project";
 import useProjectStore from "@/store/project";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { LayoutGrid } from "lucide-react";
 import { useEffect } from "react";
 
 export const Route = createFileRoute(
-  "/dashboard/workspace/$workspaceId/project/$projectId",
+  "/dashboard/workspace/$workspaceId/project/$projectId/board",
 )({
   component: RouteComponent,
 });
@@ -31,5 +32,9 @@ function RouteComponent() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <div className="h-full p-6">
+      <KanbanBoard />
+    </div>
+  );
 }
